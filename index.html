@@ -33,6 +33,7 @@
 
     .container {
       width: 90%;
+      max-width: 1200px;
       margin: 0 auto;
       display: flex;
       justify-content: space-between;
@@ -147,7 +148,7 @@
       border-radius: 12px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
       padding: 20px;
-      width: 220px; /* Larghezza uniforme per tutte le card */
+      width: 220px;
       text-align: center;
       overflow: hidden;
       position: relative;
@@ -158,8 +159,8 @@
 
     .product img {
       width: 100%;
-      height: 150px; /* Altezza uniforme per le immagini */
-      object-fit: cover; /* Mantiene le proporzioni dell'immagine */
+      height: 150px; 
+      object-fit: cover; 
       border-radius: 10px;
       transition: transform 0.3s ease;
     }
@@ -260,6 +261,63 @@
         opacity: 1;
       }
     }
+
+    /* Media Queries */
+    @media (max-width: 768px) {
+      .logo {
+        font-size: 2rem;
+      }
+
+      nav ul {
+        flex-direction: column;
+        position: absolute;
+        background: #000;
+        top: 60px;
+        right: 0;
+        width: 100%;
+        display: none;
+        z-index: 1000;
+      }
+
+      nav ul li {
+        margin: 10px 0;
+      }
+
+      nav.active ul {
+        display: flex;
+      }
+
+      .hero h1 {
+        font-size: 3rem;
+      }
+
+      .product {
+        width: 100%; /* Rende il prodotto a larghezza piena su schermi più piccoli */
+        max-width: 300px; /* Massima larghezza per evitare che diventi troppo largo */
+      }
+
+      h2 {
+        font-size: 2.5rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+
+      .cta-btn {
+        padding: 10px 20px;
+      }
+
+      h2 {
+        font-size: 2rem;
+      }
+
+      .add-to-cart {
+        font-size: 0.9rem;
+      }
+    }
   </style>
 </head>
 <body>
@@ -271,84 +329,92 @@
           <li><a href="#home">Home</a></li>
           <li><a href="#prodotti">Prodotti</a></li>
           <li><a href="#contatti">Contatti</a></li>
-          <li><a href="#carrello">Carrello</a></li>
         </ul>
       </nav>
     </div>
   </header>
 
-  <section id="home" class="hero">
-    <div class="container">
-      <h1>Eleganza e Comfort Senza Tempo</h1>
-      <a href="#prodotti" class="cta-btn">Scopri la Collezione</a>
-    </div>
-  </section>
+  <div class="hero">
+    <h1>Benvenuti in Luxury Sofà</h1>
+    <a href="#prodotti" class="cta-btn">Scopri i nostri divani</a>
+  </div>
 
-  <section id="prodotti" class="prodotti">
-    <div class="container">
-      <h2>La Nostra Collezione</h2>
-      <div class="product-grid">
-        <!-- Prodotto 1 -->
-        <div class="product">
-          <img src="https://cdn.shopify.com/s/files/1/0854/6936/4498/files/PS_Albignano_IT_BG_SV_Base.jpg?v=1715676555" alt="Divano Classico">
-          <h3>Divano Classico</h3>
-          <p class="color">Colore: Nero</p>
-          <p class="price"><span class="old-price">€1500</span> €1200</p>
-          <button class="add-to-cart">Aggiungi al Carrello</button>
-        </div>
-        <!-- Prodotto 2 -->
-        <div class="product">
-          <img src="https://cdn.shopify.com/s/files/1/0854/6936/4498/files/PS_Gattatico_Relax.jpg?v=1715696737" alt="Divano Moderno">
-          <h3>Divano Moderno</h3>
-          <p class="color">Colore: Grigio</p>
-          <p class="price">€900</p>
-          <button class="add-to-cart">Aggiungi al Carrello</button>
-        </div>
-        <!-- Prodotto 3 -->
-        <div class="product">
-          <img src="https://cdn.shopify.com/s/files/1/0854/6936/4498/files/Laghina_top_header.jpg?v=1709113624" alt="Divano Elegante">
-          <h3>Divano Elegante</h3>
-          <p class="color">Colore: Bianco</p>
-          <p class="price"><span class="old-price">€1300</span> €1100</p>
-          <button class="add-to-cart">Aggiungi al Carrello</button>
-        </div>
-        <!-- Prodotto 4 -->
-        <div class="product">
-          <img src="https://cdn.shopify.com/s/files/1/0854/6936/4498/files/birandola_header.jpg?v=1722519490" alt="Divano Familiare">
-          <h3>Divano Familiare</h3>
-          <p class="color">Colore: Marrone</p>
-          <p class="price">€1500</p>
-          <button class="add-to-cart">Aggiungi al Carrello</button>
-        </div>
-        <!-- Prodotto 5 -->
-        <div class="product">
-          <img src="https://cdn.shopify.com/s/files/1/0854/6936/4498/files/Cavarelli_top_header.jpg?v=1709117068" alt="Divano Contemporaneo">
-          <h3>Divano Contemporaneo</h3>
-          <p class="color">Colore: Blu</p>
-          <p class="price"><span class="old-price">€1600</span> €1400</p>
-          <button class="add-to-cart">Aggiungi al Carrello</button>
-        </div>
-        <!-- Prodotto 6 -->
-        <div class="product">
-          <img src="https://cdn.shopify.com/s/files/1/0854/6936/4498/files/Gavasseto_top_header.jpg?v=1709116838" alt="Divano Relax">
-          <h3>Divano Very Relax</h3>
-          <p class="color">Colore: Verde</p>
-          <p class="price">€950</p>
-          <button class="add-to-cart">Aggiungi al Carrello</button>
-        </div>
+  <section class="prodotti" id="prodotti">
+    <h2>I nostri divani</h2>
+    <div class="product-grid">
+      <div class="product">
+        <img src="https://cdn.shopify.com/s/files/1/0854/6936/4498/files/Quercioli_top_header_e9a3813a-ba25-4777-8040-ca41f7e0140a.jpg?v=1715685893" alt="Divano Elegante">
+        <h3>Divano Elegante</h3>
+        <p class="color">Colore: Grigio Scuro</p>
+        <p class="price">€999,00 <span class="old-price">€1199,00</span></p>
+        <button class="add-to-cart">Aggiungi al Carrello</button>
+      </div>
+      <div class="product">
+        <img src="https://cdn.shopify.com/s/files/1/0854/6936/4498/files/PS_Albignano_IT_BG_SV_Base.jpg?v=1715676555" alt="Divano Moderno">
+        <h3>Divano Moderno</h3>
+        <p class="color">Colore: Nero</p>
+        <p class="price">€799,00 <span class="old-price">€999,00</span></p>
+        <button class="add-to-cart">Aggiungi al Carrello</button>
+      </div>
+      <div class="product">
+        <img src="https://cdn.shopify.com/s/files/1/0854/6936/4498/files/PS_Marsignano_IT_CY_MT.jpg?v=1715696905" alt="Divano Classico">
+        <h3>Divano Classico</h3>
+        <p class="color">Colore: Beige</p>
+        <p class="price">€899,00 <span class="old-price">€1099,00</span></p>
+        <button class="add-to-cart">Aggiungi al Carrello</button>
+      </div>
+      <div class="product">
+        <img src="https://cdn.shopify.com/s/files/1/0854/6936/4498/files/Gameda_top_header.jpg?v=1709117117" alt="Divano Lussuoso">
+        <h3>Divano Lussuoso</h3>
+        <p class="color">Colore: Blu</p>
+        <p class="price">€1099,00 <span class="old-price">€1299,00</span></p>
+        <button class="add-to-cart">Aggiungi al Carrello</button>
+      </div>
+      <div class="product">
+        <img src="https://cdn.shopify.com/s/files/1/0854/6936/4498/files/top_header_cc1124bd-740e-4b3a-a35d-dbb6b719d3a5.jpg?v=1711022735" alt="Divano Stile Vintage">
+        <h3>Divano Stile Vintage</h3>
+        <p class="color">Colore: Verde Oliva</p>
+        <p class="price">€749,00 <span class="old-price">€899,00</span></p>
+        <button class="add-to-cart">Aggiungi al Carrello</button>
+      </div>
+      <div class="product">
+        <img src="https://cdn.shopify.com/s/files/1/0854/6936/4498/files/PS_Biancolina_IT_CY_MT_schienali_indietro.jpg?v=1715677744" alt="Divano Minimalista">
+        <h3>Divano Minimalista</h3>
+        <p class="color">Colore: Bianco</p>
+        <p class="price">€849,00 <span class="old-price">€999,00</span></p>
+        <button class="add-to-cart">Aggiungi al Carrello</button>
+      </div>
+      <div class="product">
+        <img src="https://cdn.shopify.com/s/files/1/0854/6936/4498/files/Larino_top_header.jpg?v=1709113325" alt="Divano Confortevole">
+        <h3>Divano Confortevole</h3>
+        <p class="color">Colore: Rosso</p>
+        <p class="price">€999,00 <span class="old-price">€1199,00</span></p>
+        <button class="add-to-cart">Aggiungi al Carrello</button>
+      </div>
+      <div class="product">
+        <img src="https://cdn.shopify.com/s/files/1/0854/6936/4498/files/Barete_top_header.jpg?v=1709113804" alt="Divano Sofisticato">
+        <h3>Divano Sofisticato</h3>
+        <p class="color">Colore: Nero Fumè</p>
+        <p class="price">€1299,00 <span class="old-price">€1499,00</span></p>
+        <button class="add-to-cart">Aggiungi al Carrello</button>
+      </div>
+      <div class="product">
+        <img src="https://cdn.shopify.com/s/files/1/0854/6936/4498/files/PS_Alfonsine_Relax_730.jpg?v=1715329564" alt="Divano Contemporaneo">
+        <h3>Divano Contemporaneo</h3>
+        <p class="color">Colore: Grigio Chiaro</p>
+        <p class="price">€849,00 <span class="old-price">€999,00</span></p>
+        <button class="add-to-cart">Aggiungi al Carrello</button>
       </div>
     </div>
   </section>
 
-  <footer id="contatti">
-    <div class="container">
-      <p>&copy; 2024 Divani di Lusso. Tutti i diritti riservati.</p>
-      <ul class="social">
-        <li><a href="#">Facebook</a></li>
-        <li><a href="#">Instagram</a></li>
-        <li><a href="#">Twitter</a></li>
-      </ul>
-    </div>
+  <footer>
+    <p>&copy; 2024 Luxury Sofà. Tutti i diritti riservati.</p>
+    <ul class="social">
+      <li><a href="#">Facebook</a></li>
+      <li><a href="#">Instagram</a></li>
+      <li><a href="#">Twitter</a></li>
+    </ul>
   </footer>
 </body>
 </html>
