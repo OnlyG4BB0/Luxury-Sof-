@@ -416,5 +416,26 @@
       <li><a href="#">Twitter</a></li>
     </ul>
   </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Smooth scrolling for navigation links
+      document.querySelectorAll('nav ul li a').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault(); // Previene il comportamento predefinito del link
+  
+          const targetId = this.getAttribute('href'); // Ottiene l'attributo href del link
+          const targetElement = document.querySelector(targetId); // Seleziona l'elemento di destinazione
+  
+          if (targetElement) {
+            targetElement.scrollIntoView({
+              behavior: 'smooth' // Aggiunge lo scroll fluido
+            });
+          }
+        });
+      });
+    });
+  </script>
+  
 </body>
 </html>
