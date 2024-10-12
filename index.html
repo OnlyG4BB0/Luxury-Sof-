@@ -110,7 +110,7 @@
       font-weight: bold;
       border: 2px solid #fff;
       border-radius: 50px;
-      margin-top: 30px;
+      margin-top: 50px; /* Aggiustato il margine per separare il bottone dal titolo */
       display: inline-block;
       transition: background-color 0.3s ease, color 0.3s ease;
       z-index: 2;
@@ -293,34 +293,13 @@
 
       .product {
         width: 100%; /* Rende il prodotto a larghezza piena su schermi più piccoli */
-        max-width: 300px; /* Massima larghezza per evitare che diventi troppo largo */
-      }
-
-      h2 {
-        font-size: 2.5rem;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .hero h1 {
-        font-size: 2.5rem;
-      }
-
-      .cta-btn {
-        padding: 10px 20px;
-      }
-
-      h2 {
-        font-size: 2rem;
-      }
-
-      .add-to-cart {
-        font-size: 0.9rem;
+        max-width: 300px; /* Imposta una larghezza massima */
       }
     }
   </style>
 </head>
 <body>
+
   <header>
     <div class="container">
       <div class="logo">Luxury Sofà</div>
@@ -334,10 +313,12 @@
     </div>
   </header>
 
-  <div class="hero">
-    <h1>Benvenuti in Luxury Sofà</h1>
-    <a href="#prodotti" class="cta-btn">Scopri i nostri divani</a>
-  </div>
+  <section id="home" class="hero">
+    <div class="container">
+      <h1>Scopri il Lusso dei Nostri Sofà</h1>
+      <a href="#prodotti" class="cta-btn">Scopri i nostri divani</a>
+    </div>
+  </section>
 
   <section class="prodotti" id="prodotti">
     <h2>I nostri divani</h2>
@@ -408,34 +389,29 @@
     </div>
   </section>
 
-  <footer>
-    <p>&copy; 2024 Luxury Sofà. Tutti i diritti riservati.</p>
+  <footer id="contatti">
+    <p>Contattaci via email a: info@luxurysofa.com</p>
     <ul class="social">
-      <li><a href="#">Facebook</a></li>
-      <li><a href="#">Instagram</a></li>
-      <li><a href="#">Twitter</a></li>
+      <li><a href="#"><i class="fab fa-facebook"></i></a></li>
+      <li><a href="#"><i class="fab fa-instagram"></i></a></li>
+      <li><a href="#"><i class="fab fa-twitter"></i></a></li>
     </ul>
   </footer>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Smooth scrolling for navigation links
-      document.querySelectorAll('nav ul li a').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-          e.preventDefault(); // Previene il comportamento predefinito del link
-  
-          const targetId = this.getAttribute('href'); // Ottiene l'attributo href del link
-          const targetElement = document.querySelector(targetId); // Seleziona l'elemento di destinazione
-  
-          if (targetElement) {
-            targetElement.scrollIntoView({
-              behavior: 'smooth' // Aggiunge lo scroll fluido
-            });
-          }
-        });
+    document.querySelector('.cta-btn').addEventListener('click', function(e) {
+      e.preventDefault();
+      document.querySelector('#prodotti').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    document.querySelectorAll('nav ul li a').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href');
+        document.querySelector(targetId).scrollIntoView({ behavior: 'smooth' });
       });
     });
   </script>
-  
+
 </body>
 </html>
