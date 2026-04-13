@@ -23,6 +23,12 @@ if (!$product) {
 
 // Controllo per il badge (se presente)
 $badgeText = isset($product['badge']) ? $product['badge'] : '';
+
+$site_base = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
+$basePath = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/')), '/');
+$og_url = $site_base . ($basePath ? $basePath : '') . '/product.php?id=' . (int) $product_id;
+$_plain = trim(strip_tags($product['description_color_material'] ?? ''));
+$page_meta_desc = $_plain !== '' ? mb_substr($_plain, 0, 158) : ($product['name'] . ' — Divani di design Luxury Sofà, artigianato italiano.');
 ?>
 
 <!DOCTYPE html>
@@ -30,6 +36,13 @@ $badgeText = isset($product['badge']) ? $product['badge'] : '';
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="<?= htmlspecialchars($page_meta_desc) ?>">
+  <meta property="og:title" content="<?= htmlspecialchars($product['name']) ?> | Luxury Sofà">
+  <meta property="og:description" content="<?= htmlspecialchars($page_meta_desc) ?>">
+  <meta property="og:type" content="product">
+  <meta property="og:url" content="<?= htmlspecialchars($og_url) ?>">
+  <meta property="og:image" content="<?= htmlspecialchars($product['main_image_url']) ?>">
+  <meta name="twitter:card" content="summary_large_image">
   <title><?= htmlspecialchars($product['name']) ?> | Luxury Sofà</title>
   
   <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='20' y='30' width='60' height='25' fill='%23000'/><rect x='10' y='58' width='80' height='12' fill='%23000'/><rect x='15' y='70' width='6' height='10' fill='%23000'/><rect x='79' y='70' width='6' height='10' fill='%23000'/></svg>" type="image/svg+xml">
@@ -63,6 +76,9 @@ $badgeText = isset($product['badge']) ? $product['badge'] : '';
     .back-btn-short { display: none; }
     .back-btn:hover { color: var(--text-secondary); transform: translateX(-5px); }
     
+    .wishlist-nav { position: relative; font-size: 1.15rem; color: var(--text-primary); text-decoration: none; display: flex; align-items: center; }
+    .wishlist-nav:hover { opacity: 0.6; }
+    .wishlist-badge { position: absolute; top: -6px; right: -10px; background-color: var(--text-primary); color: var(--white); font-size: 0.6rem; font-weight: 600; min-width: 16px; height: 16px; padding: 0 4px; display: none; align-items: center; justify-content: center; border-radius: 50%; }
     .cart-btn { position: relative; font-size: 1.2rem; transition: var(--transition-fast); cursor: pointer; color: var(--text-primary); display: flex; align-items: center; }
     .cart-btn:hover { opacity: 0.6; }
     .cart-badge { position: absolute; top: -6px; right: -10px; background-color: var(--text-primary); color: var(--white); font-size: 0.65rem; font-weight: 600; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: transform 0.3s ease; }
@@ -89,6 +105,10 @@ $badgeText = isset($product['badge']) ? $product['badge'] : '';
     .btn-add-massive { width: 100%; padding: 25px; background-color: var(--text-primary); color: var(--white); font-family: var(--font-body); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 3px; border: 1px solid var(--text-primary); cursor: pointer; transition: all 0.4s ease; margin-bottom: 50px; display: flex; justify-content: center; align-items: center; gap: 10px; }
     .btn-add-massive:hover { background-color: transparent; color: var(--text-primary); }
     .btn-add-massive:active { transform: scale(0.98); }
+    .btn-wish-line { width: 100%; padding: 16px; margin-bottom: 24px; background: transparent; border: 1px solid var(--border-color); font-family: var(--font-body); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; color: var(--text-primary); transition: var(--transition-fast); display: flex; align-items: center; justify-content: center; gap: 10px; }
+    .btn-wish-line:hover { border-color: var(--text-primary); background: #fafafa; }
+    .btn-wish-line.is-active { border-color: var(--text-primary); }
+    .btn-wish-line.is-active i { color: #b91c1c; }
 
     /* Accordion */
     .accordion-item { border-top: 1px solid var(--border-color); }
@@ -96,7 +116,7 @@ $badgeText = isset($product['badge']) ? $product['badge'] : '';
     .accordion-header { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 25px 0; background: none; border: none; font-family: var(--font-body); font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; color: var(--text-primary); }
     .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; color: var(--text-secondary); font-size: 0.95rem; line-height: 1.7; }
     .accordion-content p { padding-bottom: 25px; }
-    .accordion-item.active .accordion-content { max-height: 500px; }
+    .accordion-item.active .accordion-content { max-height: 1200px; }
     .accordion-item.active .accordion-header i { transform: rotate(180deg); }
 
     /* --- SIDE CART & TOAST (Omissis CSS per non allungare) --- */
@@ -177,6 +197,7 @@ $badgeText = isset($product['badge']) ? $product['badge'] : '';
       <a href="index.php" class="logo">Luxury Sofà.</a>
       <div class="header-actions">
           <a href="index.php#collezione" class="back-btn"><i class="fas fa-arrow-left"></i> <span class="back-btn-full">Torna alla Collezione</span><span class="back-btn-short">Collezione</span></a>
+          <a href="wishlist.php" class="wishlist-nav" id="wishlist-nav" aria-label="Preferiti"><i class="far fa-heart"></i><span class="wishlist-badge" id="wishlist-badge">0</span></a>
           <div class="cart-btn" id="cart-icon">
             <i class="fas fa-shopping-bag"></i>
             <span class="cart-badge" id="cart-badge">0</span>
@@ -256,6 +277,9 @@ $badgeText = isset($product['badge']) ? $product['badge'] : '';
             <button class="btn-add-massive" onclick="addToCart('<?= $product['sku'] ?>', '<?= addslashes($product['name']) ?>', <?= $product['price'] ?>, '<?= $product['main_image_url'] ?>')">
               Aggiungi al Carrello <i class="fas fa-arrow-right"></i>
             </button>
+            <button type="button" class="btn-wish-line" id="product-wish-btn" data-pid="<?= (int)$product_id ?>" data-sku="<?= htmlspecialchars($product['sku'], ENT_QUOTES) ?>" data-name="<?= htmlspecialchars($product['name'], ENT_QUOTES) ?>" data-price="<?= htmlspecialchars((string)(float)$product['price']) ?>" data-img="<?= htmlspecialchars($product['main_image_url'], ENT_QUOTES) ?>">
+              <i class="far fa-heart"></i> <span class="wish-btn-label">Aggiungi ai preferiti</span>
+            </button>
           </div>
 
           <!-- FISARMONICA INFORMAZIONI -->
@@ -266,6 +290,14 @@ $badgeText = isset($product['badge']) ? $product['badge'] : '';
               </button>
               <div class="accordion-content">
                 <p>Rivestimento in vera pelle o tessuti pregiati idrorepellenti. Struttura in legno massello stagionato. Cuscini in piuma d'oca e memory foam ad alta densità. Pulire con un panno morbido e umido; evitare prodotti chimici aggressivi.</p>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <button class="accordion-header">
+                Dimensioni & tempi <i class="fas fa-chevron-down"></i>
+              </button>
+              <div class="accordion-content">
+                <p>Le misure definitive dipendono dalla configurazione modulare e dal rivestimento scelto: dopo l’ordine riceverai il disegno tecnico in scala per approvazione. I tempi di consegna indicativi sono di 4–6 settimane dalla conferma dell’ordine e del saldo secondo le modalità concordate.</p>
               </div>
             </div>
             <div class="accordion-item">
@@ -291,6 +323,7 @@ $badgeText = isset($product['badge']) ? $product['badge'] : '';
     </div>
   </main>
 
+  <script src="js/store-common.js"></script>
   <script>
     // --- ANIMAZIONI & UI ---
     function reveal() {
@@ -321,7 +354,7 @@ $badgeText = isset($product['badge']) ? $product['badge'] : '';
     }
 
     // --- LOGICA CARRELLO GLOBALE (LOCALSTORAGE) ---
-    let cart = JSON.parse(localStorage.getItem('luxury_cart')) || [];
+    let cart = LUXURY_STORE.getCart();
     let activeCouponId = null;
     let discountPercent = 0;
 
@@ -336,7 +369,7 @@ $badgeText = isset($product['badge']) ? $product['badge'] : '';
     const discountAmount = document.getElementById('discount-amount');
     const discountPercentDisplay = document.getElementById('discount-percent-display');
 
-    function saveCart() { localStorage.setItem('luxury_cart', JSON.stringify(cart)); }
+    function saveCart() { LUXURY_STORE.saveCart(cart); }
 
     function toggleCart() {
       cartDrawer.classList.toggle('open');
@@ -447,34 +480,36 @@ $badgeText = isset($product['badge']) ? $product['badge'] : '';
     });
 
     const checkoutBtn = document.getElementById('checkout-btn');
-    checkoutBtn.addEventListener('click', async () => {
+    checkoutBtn.addEventListener('click', () => {
       if (cart.length === 0) return;
-      checkoutBtn.innerText = "ELABORAZIONE...";
-      checkoutBtn.style.opacity = "0.7";
-      checkoutBtn.style.pointerEvents = "none";
-      
-      const formData = new FormData();
-      formData.append('action', 'checkout');
-      formData.append('cart', JSON.stringify(cart));
-      formData.append('total', cartTotalPrice.dataset.rawTotal);
-      if(activeCouponId) formData.append('coupon_id', activeCouponId);
-
-      try {
-          const res = await fetch('api.php', { method: 'POST', body: formData });
-          const data = await res.json();
-          if(data.success) {
-              cart = []; 
-              saveCart(); // Azzera il carrello nel localStorage
-              discountPercent = 0; 
-              activeCouponId = null;
-              document.getElementById('coupon-input').value = '';
-              updateCartUI(); 
-              toggleCart(); 
-          }
-          showToast(data.message);
-      } catch (err) { showToast("Si è verificato un errore durante l'ordine."); } 
-      finally { checkoutBtn.innerText = "PROCEDI AL CHECKOUT"; checkoutBtn.style.opacity = "1"; checkoutBtn.style.pointerEvents = "auto"; }
+      window.location.href = 'checkout.php';
     });
+
+    (function wishProductPage() {
+      const wbtn = document.getElementById('product-wish-btn');
+      if (!wbtn) return;
+      function sync() {
+        const on = LUXURY_STORE.isInWishlist(wbtn.dataset.sku);
+        wbtn.classList.toggle('is-active', on);
+        const ic = wbtn.querySelector('i');
+        if (ic) ic.className = on ? 'fas fa-heart' : 'far fa-heart';
+        const lbl = wbtn.querySelector('.wish-btn-label');
+        if (lbl) lbl.textContent = on ? 'Nei tuoi preferiti' : 'Aggiungi ai preferiti';
+        LUXURY_STORE.updateWishlistBadges();
+      }
+      sync();
+      wbtn.addEventListener('click', () => {
+        LUXURY_STORE.toggleWishlist({
+          sku: wbtn.dataset.sku,
+          pid: parseInt(wbtn.dataset.pid, 10),
+          name: wbtn.dataset.name,
+          price: parseFloat(wbtn.dataset.price),
+          imgUrl: wbtn.dataset.img
+        });
+        sync();
+        showToast(LUXURY_STORE.isInWishlist(wbtn.dataset.sku) ? 'Salvato nei preferiti' : 'Rimosso dai preferiti');
+      });
+    })();
   </script>
 </body>
 </html>

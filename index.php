@@ -4,6 +4,12 @@ require_once 'db.php';
 
 $stmt = $pdo->query("SELECT * FROM products WHERE is_active = 1 ORDER BY id ASC");
 $products = $stmt->fetchAll();
+
+$site_base = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http') . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
+$basePath = rtrim(str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/')), '/');
+$canonical = $site_base . ($basePath ? $basePath : '') . '/index.php';
+$og_image = 'https://cdn.shopify.com/s/files/1/0854/6936/4498/files/PS_Folignano_IT_FR_Base.jpg?v=1715678672';
+$meta_desc = 'Luxury Sofà — divani e sistemi living artigianali italiani. Design editoriale, comfort assoluto, spedizione dedicata.';
 ?>
 
 <!DOCTYPE html>
@@ -11,6 +17,14 @@ $products = $stmt->fetchAll();
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="<?= htmlspecialchars($meta_desc) ?>">
+  <link rel="canonical" href="<?= htmlspecialchars($canonical) ?>">
+  <meta property="og:title" content="Luxury Sofà | Editorial Design 2026">
+  <meta property="og:description" content="<?= htmlspecialchars($meta_desc) ?>">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="<?= htmlspecialchars($canonical) ?>">
+  <meta property="og:image" content="<?= htmlspecialchars($og_image) ?>">
+  <meta name="twitter:card" content="summary_large_image">
   <title>Luxury Sofà | Editorial Design 2026</title>
   
   <link rel="icon" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='20' y='30' width='60' height='25' fill='%23000'/><rect x='10' y='58' width='80' height='12' fill='%23000'/><rect x='15' y='70' width='6' height='10' fill='%23000'/><rect x='79' y='70' width='6' height='10' fill='%23000'/></svg>" type="image/svg+xml">
@@ -51,8 +65,11 @@ $products = $stmt->fetchAll();
     .nav-links a:hover::after { width: 100%; }
     .header-actions { display: flex; align-items: center; gap: 25px; color: var(--white); }
     header.scrolled .header-actions { color: var(--text-primary); }
-    .cart-btn, .user-btn { position: relative; font-size: 1.1rem; transition: var(--transition-fast); cursor: pointer; display: flex; align-items: center; gap: 8px; }
-    .cart-btn:hover, .user-btn:hover { opacity: 0.6; }
+    .cart-btn, .user-btn, .wishlist-nav { position: relative; font-size: 1.1rem; transition: var(--transition-fast); cursor: pointer; display: flex; align-items: center; gap: 8px; }
+    .cart-btn:hover, .user-btn:hover, .wishlist-nav:hover { opacity: 0.6; }
+    .wishlist-nav { text-decoration: none; color: inherit; }
+    .wishlist-badge { position: absolute; top: -6px; right: -10px; background-color: var(--white); color: var(--text-primary); font-size: 0.6rem; font-weight: 600; min-width: 16px; height: 16px; padding: 0 4px; display: none; align-items: center; justify-content: center; border-radius: 50%; }
+    header.scrolled .wishlist-badge { background-color: var(--text-primary); color: var(--white); }
     .cart-badge { position: absolute; top: -6px; right: -10px; background-color: var(--white); color: var(--text-primary); font-size: 0.65rem; font-weight: 600; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: transform 0.3s ease; }
     header.scrolled .cart-badge { background-color: var(--text-primary); color: var(--white); }
     #user-name-display { font-size: 0.8rem; font-weight: 500; text-transform: uppercase; letter-spacing: 1px; display: <?= isset($_SESSION['user_id']) ? 'inline' : 'none' ?>; }
@@ -104,6 +121,23 @@ $products = $stmt->fetchAll();
     .collection-search input { width: 100%; border: none; outline: none; background: transparent; font-family: var(--font-body); font-size: 0.9rem; color: var(--text-primary); }
     .collection-search input::placeholder { color: var(--text-secondary); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
 
+    .sort-wrap { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+    .sort-wrap label {
+      font-family: var(--font-body); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px;
+      color: var(--text-primary); font-weight: 500; white-space: nowrap;
+    }
+    .sort-wrap select {
+      font-family: var(--font-body); font-size: 0.75rem; font-weight: 500; text-transform: uppercase; letter-spacing: 2px;
+      color: var(--text-primary); cursor: pointer; min-width: 200px;
+      padding: 10px 42px 10px 25px; border: 1px solid var(--border-color); border-radius: 50px; background-color: transparent;
+      transition: all var(--transition-fast);
+      appearance: none; -webkit-appearance: none; -moz-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%23000000' d='M5 6L0 0h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 20px center;
+    }
+    .sort-wrap select:hover { border-color: var(--text-primary); background-color: rgba(0,0,0,0.02); }
+    .sort-wrap select:focus { outline: none; border-color: var(--text-primary); }
+
     .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 80px 40px; }
     .product-card { position: relative; display: flex; flex-direction: column; cursor: pointer; transition: transform var(--transition-fast), opacity var(--transition-fast); }
     
@@ -111,6 +145,10 @@ $products = $stmt->fetchAll();
     .product-badge { position: absolute; top: 15px; left: 15px; background-color: var(--text-primary); color: var(--white); padding: 6px 14px; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; z-index: 5; }
     .badge-bestseller { background-color: #000; } /* Puoi cambiare colore se vuoi */
     .badge-nuovo { background-color: #000; }
+
+    .wishlist-heart { position: absolute; top: 14px; right: 14px; z-index: 8; width: 40px; height: 40px; border: none; background: rgba(255,255,255,0.92); color: var(--text-primary); border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; transition: var(--transition-fast); box-shadow: 0 4px 14px rgba(0,0,0,0.06); }
+    .wishlist-heart:hover { transform: scale(1.06); }
+    .wishlist-heart.is-active { color: #b91c1c; }
 
     .product-img-wrap { position: relative; overflow: hidden; aspect-ratio: 4/5; background-color: #F8F8F8; margin-bottom: 25px; transition: transform var(--transition-slow); }
     .product-img-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform var(--transition-slow), filter var(--transition-slow); }
@@ -268,6 +306,8 @@ $products = $stmt->fetchAll();
       .collection-search { max-width: 100%; }
       .category-filters { gap: 10px; }
       .filter-btn { padding: 10px 18px; font-size: 0.7rem; }
+      .sort-wrap label { font-size: 0.7rem; }
+      .sort-wrap select { font-size: 0.7rem; padding: 10px 38px 10px 18px; min-width: 0; width: 100%; max-width: 100%; background-position: right 16px center; }
       #toast-container { left: 12px; right: 12px; bottom: max(16px, env(safe-area-inset-bottom)); display: flex; flex-direction: column; align-items: stretch; }
       .toast { transform: translateY(120%); width: 100%; justify-content: center; padding: 16px 20px; font-size: 0.8rem; }
       .toast.show { transform: translateY(0); }
@@ -296,6 +336,10 @@ $products = $stmt->fetchAll();
         </ul>
       </nav>
       <div class="header-actions">
+        <a href="wishlist.php" class="wishlist-nav" id="wishlist-nav" title="Preferiti" aria-label="Preferiti">
+          <i class="far fa-heart"></i>
+          <span class="wishlist-badge" id="wishlist-badge">0</span>
+        </a>
         <div class="user-btn" id="login-icon" title="Area Riservata">
           <i class="<?= isset($_SESSION['user_id']) ? 'fas' : 'far' ?> fa-user"></i>
           <span id="user-name-display" style="display: <?= isset($_SESSION['user_id']) ? 'inline' : 'none' ?>;">
@@ -434,7 +478,15 @@ $products = $stmt->fetchAll();
             <button class="filter-btn" data-filter="nuovo">Nuovi Arrivi</button>
             <button class="filter-btn" data-filter="bestseller">Più Venduti</button>
           </div>
-          
+          <div class="sort-wrap">
+            <label for="sort-products">Ordina</label>
+            <select id="sort-products" aria-label="Ordina prodotti">
+              <option value="default">In evidenza</option>
+              <option value="price-asc">Prezzo ↑</option>
+              <option value="price-desc">Prezzo ↓</option>
+              <option value="newest">Più recenti</option>
+            </select>
+          </div>
           <div class="collection-search">
             <i class="fas fa-search"></i>
             <input type="text" id="product-search" placeholder="Cerca un modello o colore...">
@@ -453,7 +505,7 @@ $products = $stmt->fetchAll();
           ?>
           
           <!-- L'attributo data-badge serve al JavaScript per i filtri -->
-          <div class="product-card reveal <?= $delayClass ?>" data-badge="<?= htmlspecialchars($badgeFilterData) ?>" onclick="window.location.href='product.php?id=<?= $p['id'] ?>'">
+          <div class="product-card reveal <?= $delayClass ?>" data-badge="<?= htmlspecialchars($badgeFilterData) ?>" data-product-id="<?= (int)$p['id'] ?>" data-price="<?= htmlspecialchars((string)(float)$p['price']) ?>" data-sku="<?= htmlspecialchars($p['sku']) ?>" onclick="window.location.href='product.php?id=<?= $p['id'] ?>'">
             <div class="product-img-wrap">
               
               <!-- Mostra il badge visivo se presente nel DB -->
@@ -461,7 +513,9 @@ $products = $stmt->fetchAll();
                  <span class="product-badge badge-<?= $badgeFilterData ?>"><?= htmlspecialchars($badgeText) ?></span>
               <?php endif; ?>
 
-              <img src="<?= htmlspecialchars($p['main_image_url']) ?>" alt="<?= htmlspecialchars($p['name']) ?>">
+              <button type="button" class="wishlist-heart" title="Salva nei preferiti" aria-label="Preferiti" data-pid="<?= (int)$p['id'] ?>" data-sku="<?= htmlspecialchars($p['sku'], ENT_QUOTES) ?>" data-name="<?= htmlspecialchars($p['name'], ENT_QUOTES) ?>" data-price="<?= htmlspecialchars((string)(float)$p['price']) ?>" data-img="<?= htmlspecialchars($p['main_image_url'], ENT_QUOTES) ?>" onclick="event.stopPropagation(); window.toggleWishlistBtn(this);"><i class="far fa-heart"></i></button>
+
+              <img src="<?= htmlspecialchars($p['main_image_url']) ?>" alt="<?= htmlspecialchars($p['name']) ?>" loading="lazy" decoding="async" width="640" height="800">
               
               <div class="quick-add-wrap">
                 <button class="btn-quick-add" onclick="event.stopPropagation(); addToCart('<?= $p['sku'] ?>', '<?= addslashes($p['name']) ?>', <?= $p['price'] ?>, '<?= $p['main_image_url'] ?>')">Aggiungi</button>
@@ -513,15 +567,16 @@ $products = $stmt->fetchAll();
             <li><a href="#home">Home</a></li>
             <li><a href="#storia">Manifesto</a></li>
             <li><a href="#collezione">Archivio</a></li>
+            <li><a href="wishlist.php">Preferiti</a></li>
           </ul>
         </div>
 
         <div class="footer-links reveal delay-2">
           <h4>Assistenza</h4>
           <ul>
-            <li><a href="#">Contatti</a></li>
-            <li><a href="#">Politiche di Reso</a></li>
-            <li><a href="#">FAQ</a></li>
+            <li><a href="legali.php#privacy">Privacy</a></li>
+            <li><a href="legali.php#spedizioni">Spedizioni e resi</a></li>
+            <li><a href="legali.php#termini">Condizioni d'uso</a></li>
           </ul>
         </div>
       </div>
@@ -536,6 +591,7 @@ $products = $stmt->fetchAll();
     </div>
   </footer>
 
+  <script src="js/store-common.js"></script>
   <script>
     // --- UTILS & HEADER SCROLL ---
     const header = document.getElementById('main-header');
@@ -591,6 +647,21 @@ $products = $stmt->fetchAll();
     const noResultsMsg = document.getElementById('no-results-msg');
     
     let currentCategory = 'all';
+    const sortSelect = document.getElementById('sort-products');
+
+    function sortProductCards() {
+      const grid = document.getElementById('product-grid');
+      const msg = document.getElementById('no-results-msg');
+      const cards = Array.from(grid.querySelectorAll('.product-card'));
+      const mode = sortSelect ? sortSelect.value : 'default';
+      cards.sort((a, b) => {
+        if (mode === 'price-asc') return parseFloat(a.dataset.price) - parseFloat(b.dataset.price);
+        if (mode === 'price-desc') return parseFloat(b.dataset.price) - parseFloat(a.dataset.price);
+        if (mode === 'newest') return parseInt(b.dataset.productId, 10) - parseInt(a.dataset.productId, 10);
+        return parseInt(a.dataset.productId, 10) - parseInt(b.dataset.productId, 10);
+      });
+      cards.forEach(c => grid.insertBefore(c, msg));
+    }
 
     function applyFilters() {
         const searchTerm = searchInput.value.toLowerCase().trim();
@@ -621,10 +692,12 @@ $products = $stmt->fetchAll();
         } else {
             noResultsMsg.style.display = 'none';
         }
+        sortProductCards();
     }
 
     // Event listener per la barra di ricerca
     searchInput.addEventListener('input', applyFilters);
+    if (sortSelect) sortSelect.addEventListener('change', applyFilters);
 
     // Event listener per i pulsanti Categoria (Tutti, Nuovo, Bestseller)
     filterBtns.forEach(btn => {
@@ -636,8 +709,10 @@ $products = $stmt->fetchAll();
         });
     });
 
+    sortProductCards();
+
     // --- CARRELLO (SALVATO IN LOCALSTORAGE) ---
-    let cart = JSON.parse(localStorage.getItem('luxury_cart')) || [];
+    let cart = LUXURY_STORE.getCart();
     let activeCouponId = null;
     let discountPercent = 0;
 
@@ -652,7 +727,7 @@ $products = $stmt->fetchAll();
     const discountAmount = document.getElementById('discount-amount');
     const discountPercentDisplay = document.getElementById('discount-percent-display');
 
-    function saveCart() { localStorage.setItem('luxury_cart', JSON.stringify(cart)); }
+    function saveCart() { LUXURY_STORE.saveCart(cart); }
 
     function toggleCart() {
       cartDrawer.classList.toggle('open');
@@ -762,33 +837,36 @@ $products = $stmt->fetchAll();
     });
 
     const checkoutBtn = document.getElementById('checkout-btn');
-    checkoutBtn.addEventListener('click', async () => {
+    checkoutBtn.addEventListener('click', () => {
       if (cart.length === 0) return;
-      checkoutBtn.innerText = "ELABORAZIONE...";
-      checkoutBtn.style.opacity = "0.7";
-      checkoutBtn.style.pointerEvents = "none";
-      
-      const formData = new FormData();
-      formData.append('action', 'checkout');
-      formData.append('cart', JSON.stringify(cart));
-      formData.append('total', cartTotalPrice.dataset.rawTotal);
-      if(activeCouponId) formData.append('coupon_id', activeCouponId);
-
-      try {
-          const res = await fetch('api.php', { method: 'POST', body: formData });
-          const data = await res.json();
-          if(data.success) {
-              cart = []; 
-              saveCart(); 
-              discountPercent = 0; 
-              activeCouponId = null;
-              document.getElementById('coupon-input').value = '';
-              updateCartUI(); toggleCart(); 
-          }
-          showToast(data.message);
-      } catch (err) { showToast("Si è verificato un errore durante l'ordine."); } 
-      finally { checkoutBtn.innerText = "PROCEDI AL CHECKOUT"; checkoutBtn.style.opacity = "1"; checkoutBtn.style.pointerEvents = "auto"; }
+      window.location.href = 'checkout.php';
     });
+
+    window.toggleWishlistBtn = function(btn) {
+      const item = {
+        sku: btn.dataset.sku,
+        pid: parseInt(btn.dataset.pid, 10),
+        name: btn.dataset.name,
+        price: parseFloat(btn.dataset.price),
+        imgUrl: btn.dataset.img
+      };
+      const on = LUXURY_STORE.toggleWishlist(item);
+      btn.classList.toggle('is-active', on);
+      const ic = btn.querySelector('i');
+      if (ic) ic.className = on ? 'fas fa-heart' : 'far fa-heart';
+      LUXURY_STORE.updateWishlistBadges();
+      showToast(on ? 'Salvato nei preferiti' : 'Rimosso dai preferiti');
+    };
+
+    (function syncWishlistHearts() {
+      document.querySelectorAll('.wishlist-heart').forEach(btn => {
+        const on = LUXURY_STORE.isInWishlist(btn.dataset.sku);
+        btn.classList.toggle('is-active', on);
+        const ic = btn.querySelector('i');
+        if (ic) ic.className = on ? 'fas fa-heart' : 'far fa-heart';
+      });
+      LUXURY_STORE.updateWishlistBadges();
+    })();
 
     // --- MODALE LOGIN / REGISTRAZIONE ---
     const loginIcon = document.getElementById('login-icon');

@@ -162,12 +162,38 @@ if ($action === 'checkout') {
         }
     }
 
+    $shipName = trim($_POST['shipping_fullname'] ?? '');
+    if ($shipName === '') {
+        $shipName = $userId ? 'Cliente registrato' : 'Acquirente Web';
+    }
+    $shipAddr = trim($_POST['shipping_address'] ?? '');
+    if ($shipAddr === '') {
+        $shipAddr = 'Indirizzo da confermare con il nostro ufficio commerciale';
+    }
+    $shipCity = trim($_POST['shipping_city'] ?? '');
+    if ($shipCity === '') {
+        $shipCity = '—';
+    }
+    $shipZip = trim($_POST['shipping_zipcode'] ?? '');
+    if ($shipZip === '') {
+        $shipZip = '00000';
+    }
+    $orderNotes = trim($_POST['order_notes'] ?? '');
+    $paymentMethod = preg_replace('/[^a-zA-Z0-9_\-\s]/u', '', trim($_POST['payment_method'] ?? 'bonifico'));
+    if ($paymentMethod === '') {
+        $paymentMethod = 'bonifico';
+    }
+    if ($orderNotes !== '') {
+        $shipAddr .= "\nNote ordine: " . preg_replace('/\s+/', ' ', $orderNotes);
+    }
+    $shipCity .= ' · Pagamento: ' . $paymentMethod;
+
     try {
         $pdo->beginTransaction();
 
         $stmt = $pdo->prepare("INSERT INTO orders (user_id, coupon_id, shipping_fullname, shipping_address, shipping_city, shipping_zipcode, total_amount, status) 
-                               VALUES (?, ?, 'Acquirente Web', 'Indirizzo da inserire', 'Città', '00000', ?, 'paid')");
-        $stmt->execute([$userId, $couponId, $total]);
+                               VALUES (?, ?, ?, ?, ?, ?, ?, 'paid')");
+        $stmt->execute([$userId, $couponId, $shipName, $shipAddr, $shipCity, $shipZip, $total]);
         
         $orderId = $pdo->lastInsertId();
 
@@ -179,7 +205,11 @@ if ($action === 'checkout') {
         }
 
         $pdo->commit();
-        echo json_encode(['success' => true, 'message' => 'Ordine #' . $orderId . ' confermato con successo!']);
+        echo json_encode([
+            'success' => true,
+            'message' => 'Ordine #' . $orderId . ' confermato con successo!',
+            'order_id' => (int) $orderId
+        ]);
         
     } catch(Exception $e) {
         $pdo->rollBack();
